@@ -7,5 +7,29 @@
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // Listen for auth message from popup
+    window.addEventListener("message", function(e) {
+      if (e.data && typeof e.data === "string" && e.data.includes("authorization:github:success")) {
+        console.log("Auth message received:", e.data);
+      }
+    });
+
+    // Check localStorage fallback every second
+    var authCheck = setInterval(function() {
+      try {
+        var stored = localStorage.getItem("netlify-cms-token");
+        if (stored) {
+          var data = JSON.parse(stored);
+          if (data.token) {
+            localStorage.removeItem("netlify-cms-token");
+            clearInterval(authCheck);
+            var message = "authorization:github:success:" + JSON.stringify(data);
+            window.dispatchEvent(new MessageEvent("message", { data: message, origin: window.location.origin }));
+          }
+        }
+      } catch(e) {}
+    }, 1000);
+  </script>
 </body>
 </html>
