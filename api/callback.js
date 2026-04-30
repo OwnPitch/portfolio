@@ -16,39 +16,36 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-      }),
+      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code }),
     });
 
     const data = await response.json();
+    const token = data.access_token;
+    const provider = 'github';
+    const message = `authorization:${provider}:success:${JSON.stringify({token, provider})}`;
 
     res.setHeader('Content-Type', 'text/html');
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Authorizing...</title></head>
-      <body>
-        <script>
-          (function() {
-            const data = ${JSON.stringify(data)};
-            const token = data.access_token;
-            const provider = "github";
-            if (window.opener) {
-              window.opener.postMessage(
-                "authorization:" + provider + ":success:" + JSON.stringify({ token, provider }),
-                "*"
-              );
-            }
-            setTimeout(() => window.close(), 500);
-          })();
-        <\/script>
-        <p>Authorizing... you can close this window.</p>
-      </body>
-      </html>
-    `);
+    res.send(`<!DOCTYPE html>
+<html>
+<head><title>Authorizing...</title></head>
+<body>
+<script>
+(function() {
+  var message = ${JSON.stringify(message)};
+  function sendMessage() {
+    if (window.opener) {
+      window.opener.postMessage(message, '*');
+      setTimeout(function() { window.close(); }, 1000);
+    } else {
+      setTimeout(sendMessage, 100);
+    }
+  }
+  sendMessage();
+})();
+</script>
+<p>Authorizing... do not close this window.</p>
+</body>
+</html>`);
   } catch (error) {
     res.status(500).send('OAuth error: ' + error.message);
   }
