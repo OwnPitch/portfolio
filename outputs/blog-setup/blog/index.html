@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog – Anneli's Portfolio</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+    }
+    header {
+      padding: 2rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a { text-decoration: none; color: inherit; font-weight: 600; }
+    .blog-hero {
+      padding: 4rem 2rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .blog-hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .blog-hero p { color: #666; font-size: 1.1rem; }
+    .posts-grid {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .post-card {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s;
+      display: block;
+    }
+    .post-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .post-date { font-size: 0.85rem; color: #999; margin-bottom: 0.5rem; }
+    .post-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .post-desc { color: #555; line-height: 1.6; }
+    .read-more {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #0070f3;
+    }
+    #loading { text-align: center; padding: 3rem; color: #999; }
+    #error { text-align: center; padding: 3rem; color: #c00; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/">← Back to Portfolio</a>
+    <span>Blog</span>
+  </header>
+
+  <div class="blog-hero">
+    <h1>Blog</h1>
+    <p>Thoughts on accessibility, design, and inclusive experiences.</p>
+  </div>
+
+  <div class="posts-grid" id="posts">
+    <p id="loading">Loading posts...</p>
+  </div>
+
+  <script>
+    const REPO = 'OwnPitch/portfolio';
+    const BRANCH = 'main';
+
+    async function loadPosts() {
+      const container = document.getElementById('posts');
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/_posts?ref=${BRANCH}`);
+        if (!res.ok) throw new Error('No posts found');
+        const files = await res.json();
+
+        if (!files.length) {
+          container.innerHTML = '<p style="color:#999;text-align:center">No posts yet. Check back soon!</p>';
+          return;
+        }
+
+        const posts = await Promise.all(files.map(async (file) => {
+          const r = await fetch(file.download_url);
+          const text = await r.text();
+          return parsePost(text, file.name);
+        }));
+
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        container.innerHTML = posts.map(post => `
+          <a class="post-card" href="/blog/post.html?slug=${post.slug}">
+            <div class="post-date">${formatDate(post.date)}</div>
+            <div class="post-title">${post.title}</div>
+            <div class="post-desc">${post.description}</div>
+            <span class="read-more">Read more →</span>
+          </a>
+        `).join('');
+      } catch (e) {
+        container.innerHTML = '<p id="error">Could not load posts. Try again later.</p>';
+      }
+    }
+
+    function parsePost(text, filename) {
+      const frontmatterMatch = text.match(/^---\n([\s\S]*?)\n---/);
+      const meta = {};
+      if (frontmatterMatch) {
+        frontmatterMatch[1].split('\n').forEach(line => {
+          const [key, ...val] = line.split(':');
+          if (key) meta[key.trim()] = val.join(':').trim().replace(/^"|"$/g, '');
+        });
+      }
+      return {
+        slug: filename.replace('.md', ''),
+        title: meta.title || filename,
+        date: meta.date || '',
+        description: meta.description || '',
+      };
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
