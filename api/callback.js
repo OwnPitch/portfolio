@@ -29,21 +29,23 @@ export default async function handler(req, res) {
 <html>
 <head><title>Authorizing...</title></head>
 <body>
+<p id="status">Authorizing...</p>
 <script>
 (function() {
   var message = ${JSON.stringify(message)};
-  function sendMessage() {
-    if (window.opener) {
-      window.opener.postMessage(message, '*');
-      setTimeout(function() { window.close(); }, 1000);
-    } else {
-      setTimeout(sendMessage, 100);
-    }
+  var status = document.getElementById('status');
+  
+  if (!window.opener) {
+    status.textContent = 'ERROR: window.opener is null. Token: ' + ${JSON.stringify(token ? 'OK' : 'MISSING')};
+    return;
   }
-  sendMessage();
+  
+  status.textContent = 'Sending token to parent window...';
+  window.opener.postMessage(message, '*');
+  status.textContent = 'Done! Closing...';
+  setTimeout(function() { window.close(); }, 2000);
 })();
 </script>
-<p>Authorizing... do not close this window.</p>
 </body>
 </html>`);
   } catch (error) {
