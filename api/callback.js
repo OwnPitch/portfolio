@@ -24,7 +24,6 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    const token = data.access_token;
 
     res.setHeader('Content-Type', 'text/html');
     res.send(`
@@ -34,7 +33,8 @@ export default async function handler(req, res) {
       <body>
         <script>
           (function() {
-            const token = "${token}";
+            const data = ${JSON.stringify(data)};
+            const token = data.access_token;
             const provider = "github";
             if (window.opener) {
               window.opener.postMessage(
@@ -42,10 +42,10 @@ export default async function handler(req, res) {
                 "*"
               );
             }
-            window.close();
+            setTimeout(() => window.close(), 500);
           })();
-        </script>
-        <p>Authorization complete. You can close this window.</p>
+        <\/script>
+        <p>Authorizing... you can close this window.</p>
       </body>
       </html>
     `);
