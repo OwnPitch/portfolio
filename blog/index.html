@@ -1,90 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog – Anneli's Portfolio</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #fff; color: #1a1a1a; }
-    header { padding: 2rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    header a { text-decoration: none; color: inherit; font-weight: 600; }
-    .blog-hero { padding: 4rem 2rem 2rem; max-width: 800px; margin: 0 auto; }
-    .blog-hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .blog-hero p { color: #666; font-size: 1.1rem; }
-    .posts-grid { max-width: 800px; margin: 3rem auto; padding: 0 2rem; display: flex; flex-direction: column; gap: 2rem; }
-    .post-card { border: 1px solid #eee; border-radius: 12px; padding: 2rem; text-decoration: none; color: inherit; transition: box-shadow 0.2s; display: block; }
-    .post-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    .post-date { font-size: 0.85rem; color: #999; margin-bottom: 0.5rem; }
-    .post-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .post-desc { color: #555; line-height: 1.6; }
-    .read-more { display: inline-block; margin-top: 1rem; font-weight: 600; color: #0070f3; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog – Anneli Torres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #EDEBE6;
+    --ink: #0C0C0A;
+    --ink-50: rgba(12,12,10,0.5);
+    --ink-15: rgba(12,12,10,0.12);
+    --orange: #CC4418;
+  }
+  body { background: var(--cream); color: var(--ink); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+
+  /* NAV */
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 4rem;
+    border-bottom: 1px solid var(--ink-15);
+  }
+  .logo { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-decoration: none; color: var(--ink); }
+  nav { display: flex; gap: 2rem; }
+  nav a { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; color: var(--ink); opacity: 0.55; transition: opacity 0.2s; }
+  nav a:hover { opacity: 1; }
+
+  /* PAGE */
+  .page { max-width: 860px; margin: 0 auto; padding: 5rem 2rem 6rem; }
+
+  .page-eyebrow {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--orange);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .page-eyebrow::before { content: ''; display: block; width: 20px; height: 1.5px; background: var(--orange); }
+
+  .page-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+    margin-bottom: 4rem;
+  }
+  .page-title span { font-weight: 300; }
+
+  /* STATES */
+  .state {
+    text-align: center; padding: 5rem 0;
+    font-size: 0.9rem; color: var(--ink-50);
+  }
+  .spinner {
+    width: 28px; height: 28px; margin: 0 auto 1.25rem;
+    border: 2px solid var(--ink-15);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* POST LIST */
+  .post-list { display: flex; flex-direction: column; }
+
+  .post-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 3rem;
+    padding: 2.25rem 0;
+    border-bottom: 1px solid var(--ink-15);
+    text-decoration: none;
+    color: var(--ink);
+    transition: opacity 0.2s;
+  }
+  .post-item:first-child { border-top: 1px solid var(--ink-15); }
+  .post-item:hover { opacity: 0.65; }
+
+  .post-date {
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--ink-50);
+    padding-top: 0.2rem;
+    text-transform: uppercase;
+  }
+
+  .post-right {}
+  .post-title {
+    font-size: 1.3rem; font-weight: 700;
+    line-height: 1.25; margin-bottom: 0.5rem;
+  }
+  .post-desc {
+    font-size: 0.9rem; font-weight: 400;
+    line-height: 1.6; color: var(--ink-50);
+    margin-bottom: 0.85rem;
+    max-width: 560px;
+  }
+  .post-read {
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .empty-state {
+    text-align: center; padding: 5rem 0;
+    color: var(--ink-50);
+    font-size: 0.9rem; line-height: 1.7;
+  }
+  .empty-state strong { color: var(--ink); font-weight: 700; }
+</style>
 </head>
 <body>
-  <header>
-    <a href="/">← Back to Portfolio</a>
-    <span>Blog</span>
-  </header>
-  <div class="blog-hero">
-    <h1>Blog</h1>
-    <p>Thoughts on accessibility, design, and inclusive experiences.</p>
-  </div>
-  <div class="posts-grid" id="posts">
-    <p style="color:#999;text-align:center">Loading posts...</p>
-  </div>
-  <script>
-    const REPO = 'OwnPitch/portfolio';
-    const BRANCH = 'main';
 
-    async function loadPosts() {
-      const container = document.getElementById('posts');
-      try {
-        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/_posts?ref=${BRANCH}`);
-        if (!res.ok) throw new Error('No posts found');
-        const files = await res.json();
-        if (!files.length) {
-          container.innerHTML = '<p style="color:#999;text-align:center">No posts yet!</p>';
-          return;
+<header>
+  <a class="logo" href="/">Anneli Torres · Visual Design</a>
+  <nav>
+    <a href="/">Work</a>
+    <a href="/case-studies/">Case Studies</a>
+    <a href="/services/">Services</a>
+    <a href="/blog/" aria-current="page" style="opacity:1">Blog</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+</header>
+
+<main class="page">
+  <p class="page-eyebrow">Writing</p>
+  <h1 class="page-title">Thinking out<br><span>loud.</span></h1>
+
+  <div id="blog-list">
+    <div class="state">
+      <div class="spinner"></div>
+      Loading posts…
+    </div>
+  </div>
+</main>
+
+<script>
+const REPO   = 'OwnPitch/portfolio';
+const BRANCH = 'main';
+const FOLDER = '_posts';
+
+// Parse YAML-style frontmatter
+function parseFrontmatter(raw) {
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!match) return { meta: {}, body: raw };
+  const meta = {};
+  match[1].split('\n').forEach(line => {
+    const idx = line.indexOf(':');
+    if (idx === -1) return;
+    const key = line.slice(0, idx).trim();
+    const val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+    meta[key] = val;
+  });
+  return { meta, body: match[2] };
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const d = new Date(str);
+  if (isNaN(d)) return str;
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// Slug from filename: "2024-01-15-my-post.md" → "2024-01-15-my-post"
+function slugFromName(name) {
+  return name.replace(/\.md$/i, '');
+}
+
+async function loadPosts() {
+  const container = document.getElementById('blog-list');
+
+  try {
+    // 1. List all files in _posts via GitHub Contents API
+    const listRes = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${FOLDER}?ref=${BRANCH}`,
+      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+    );
+
+    if (!listRes.ok) throw new Error(`GitHub API ${listRes.status}`);
+    const files = await listRes.json();
+
+    // Filter to markdown files only
+    const mdFiles = files.filter(f => f.name.endsWith('.md') || f.name.endsWith('.markdown'));
+
+    if (!mdFiles.length) {
+      container.innerHTML = `<div class="empty-state">No posts yet.<br><strong>Add a markdown file to your _posts folder to get started.</strong></div>`;
+      return;
+    }
+
+    // 2. Fetch each file's content to get frontmatter
+    const posts = await Promise.all(
+      mdFiles.map(async file => {
+        try {
+          const raw = await fetch(
+            `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${FOLDER}/${file.name}`
+          ).then(r => r.text());
+          const { meta } = parseFrontmatter(raw);
+          return {
+            slug: meta.slug || slugFromName(file.name),
+            title: meta.title || slugFromName(file.name),
+            description: meta.description || '',
+            date: meta.date || '',
+            _dateRaw: meta.date || file.name.slice(0, 10) || '1970-01-01'
+          };
+        } catch {
+          return null;
         }
-        const posts = await Promise.all(files.map(async (file) => {
-          const r = await fetch(file.download_url);
-          const text = await r.text();
-          return parsePost(text, file.name);
-        }));
-        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        container.innerHTML = posts.map(post => `
-          <a class="post-card" href="/blog/post.html?slug=${post.slug}">
-            <div class="post-date">${formatDate(post.date)}</div>
-            <div class="post-title">${post.title}</div>
-            <div class="post-desc">${post.description}</div>
-            <span class="read-more">Read more →</span>
-          </a>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = '<p style="color:#c00;text-align:center">Could not load posts.</p>';
-      }
-    }
+      })
+    );
 
-    function parsePost(text, filename) {
-      const frontmatterMatch = text.match(/^---\n([\s\S]*?)\n---/);
-      const meta = {};
-      if (frontmatterMatch) {
-        frontmatterMatch[1].split('\n').forEach(line => {
-          const [key, ...val] = line.split(':');
-          if (key) meta[key.trim()] = val.join(':').trim().replace(/^"|"$/g, '');
-        });
-      }
-      return { slug: filename.replace('.md', ''), title: meta.title || filename, date: meta.date || '', description: meta.description || '' };
-    }
+    // 3. Sort newest first, filter nulls
+    const sorted = posts
+      .filter(Boolean)
+      .sort((a, b) => new Date(b._dateRaw) - new Date(a._dateRaw));
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    }
+    // 4. Render
+    container.innerHTML = `<div class="post-list">${
+      sorted.map(p => `
+        <a class="post-item" href="/blog/post.html?slug=${encodeURIComponent(p.slug)}">
+          <div class="post-date">${formatDate(p.date)}</div>
+          <div class="post-right">
+            <h2 class="post-title">${p.title}</h2>
+            ${p.description ? `<p class="post-desc">${p.description}</p>` : ''}
+            <span class="post-read">Read →</span>
+          </div>
+        </a>
+      `).join('')
+    }</div>`;
 
-    loadPosts();
-  </script>
+  } catch (err) {
+    container.innerHTML = `<div class="empty-state">
+      Couldn't load posts.<br>
+      <strong>${err.message}</strong><br><br>
+      If you're seeing this on localhost, open the live site — GitHub API blocks local requests.
+    </div>`;
+  }
+}
+
+loadPosts();
+</script>
+
 </body>
 </html>
