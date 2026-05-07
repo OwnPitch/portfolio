@@ -2,7 +2,7 @@
 title: Choosing the right chart for financial narratives
 date: 2026-05-07T07:10:00
 description: When a waterfall beats a bar. When a stacked column lies. A practical decision tree for non-designers building data exhibits.
-image: ''
+image: /images/uploads/post03.png
 ---
 
 ### Choosing the Right Chart for Financial Narratives
